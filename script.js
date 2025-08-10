@@ -1,5 +1,7 @@
-// Tilt effect
+// Tilt effect on card-inner
 document.querySelectorAll("[data-tilt]").forEach(card => {
+    const inner = card.querySelector(".card-inner");
+
     card.addEventListener("mousemove", e => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -8,16 +10,16 @@ document.querySelectorAll("[data-tilt]").forEach(card => {
         const centerY = rect.height / 2;
         const rotateX = ((y - centerY) / centerY) * 10;
         const rotateY = ((x - centerX) / centerX) * 10;
-        card.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        inner.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
     });
 
     card.addEventListener("mouseleave", () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        inner.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
     });
 });
 
-// Fade-in on scroll
-const cards = document.querySelectorAll(".card, .profile-card");
+// Fade-in on scroll (with initial load check)
+const cards = document.querySelectorAll(".card");
 const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -29,4 +31,9 @@ const observer = new IntersectionObserver(entries => {
 cards.forEach(card => {
     card.style.animationPlayState = "paused";
     observer.observe(card);
+
+    // Trigger animation immediately if already visible
+    if (card.getBoundingClientRect().top < window.innerHeight) {
+        card.style.animationPlayState = "running";
+    }
 });
